@@ -67,7 +67,7 @@ String response = restTemplate.postForObject("http://www.example.com", params, S
 System.out.println(response);
 ```
 
-If you want to make an asynchronous HTTP POST request using RestTemplate, you can use the postForEntityAsync() or postForObjectAsync() methods, which are similar to the synchronous versions described above but they return a Future object that you can use to access the response asynchronously. Here is an example:
+If you want to make an **asynchronous** HTTP POST request using RestTemplate, you can use the postForEntityAsync() or postForObjectAsync() methods, which are similar to the synchronous versions described above but they return a Future object that you can use to access the response asynchronously. Here is an example:
 
 ```Java
 // Create a new RestTemplate instance
