@@ -1,7 +1,7 @@
 
 To make an HTTP request in Java with Spring Boot, you can use the RestTemplate class. Here is an example:
 
-```
+```Java
 // Create a new RestTemplate instance
 RestTemplate restTemplate = new RestTemplate();
 
