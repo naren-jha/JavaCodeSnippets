@@ -215,9 +215,8 @@ public void deleteFromList(String key, long count, Object value) {
 
 This example shows how you can use the leftPush() method to add an element to the head of a list, the rightPop() method to remove and return the last element in a list, the range() method to retrieve a range of elements from a list, and the remove() method to remove elements from a list.
 
-the range() method is used to retrieve a range of elements from the list with a given key. The start and end parameters specify the index of the first and last elements to retrieve, respectively. To get all elements pass start=0 and end=-1.
 
-another example:
+example:
 ```Java
 redisTemplate.opsForList().leftPush('x', 1);
 redisTemplate.opsForList().leftPush('x', 2);
@@ -232,7 +231,9 @@ System.out.println(redisTemplate.opsForList().rightPop('x')); // 2
 // at this point list ['y'] will contain the elements [4, 3]
 ```
 
-another example:
+the range() method is used to retrieve a range of elements from the list with a given key. The start and end parameters specify the index of the first and last elements to retrieve, respectively. To get all elements pass start=0 and end=-1.
+
+example:
 ```Java
 redisTemplate.opsForList().leftPush('y', 1);
 redisTemplate.opsForList().leftPush('y', 2);
@@ -247,3 +248,59 @@ List<Object> range2 = getListRange("y", 0, 2); // will give you [6, 5, 4]
 List<Object> range3 = getListRange("y", 2, 4); // will give you [4, 3, 2]
 List<Object> range4 = getListRange("y", 0, -1); // will give you [6, 5, 4, 3, 2, 1]
 ```
+
+the remove() method is used to remove elements from the list with a given key. The count parameter specifies the number of occurrences of the value to remove, and the value parameter specifies the value to remove.
+
+**opsForSet():**
+
+The opsForSet() method of the RedisTemplate provides operations for working with sets in Redis.
+
+A Redis set is a data structure that represents an unordered collection of elements, with no duplicates. You can use sets to store collections of items, such as tags or categories. You can use the opsForSet() methods to manipulate the contents of a set.
+
+Here is an example of how you can use the opsForSet() methods to work with a set in Redis:
+
+```Java
+@Autowired
+private RedisTemplate<String, Object> redisTemplate;
+
+public void addToSet(String key, Object... values) {
+    redisTemplate.opsForSet().add(key, values);
+}
+
+public Set<Object> getSetMembers(String key) {
+    return redisTemplate.opsForSet().members(key);
+}
+
+public void removeFromSet(String key, Object... values) {
+    redisTemplate.opsForSet().remove(key, values);
+}
+```
+
+This example shows how you can use the add() method to add one or more elements to a set, the members() method to retrieve all elements in a set, and the remove() method to remove one or more elements from a set.
+
+**opsForZSet():**
+
+The opsForZSet() method of the RedisTemplate provides operations for working with sorted sets in Redis.
+
+A Redis sorted set is a data structure that represents an ordered collection of elements, with each element having an associated score. The elements are sorted in ascending order by score. You can use sorted sets to store items that need to be ranked or sorted in some way, such as the top scores in a game or the most popular articles on a website. You can use the opsForZSet() methods to manipulate the contents of a sorted set.
+
+Here is an example of how you can use the opsForZSet() methods to work with a sorted set in Redis:
+
+```Java
+@Autowired
+private RedisTemplate<String, Object> redisTemplate;
+
+public void addToZSet(String key, Object value, double score) {
+    redisTemplate.opsForZSet().add(key, value, score);
+}
+
+public Set<Object> getZSetRange(String key, long start, long end) {
+    return redisTemplate.opsForZSet().range(key, start, end);
+}
+
+public void removeFromZSet(String key, Object... values) {
+    redisTemplate.opsForZSet().remove(key, values);
+}
+```
+
+This example shows how you can use the add() method to add an element to a sorted set with a specific score, the range() method to retrieve a range of elements from a sorted set, and the remove() method to remove one or more elements from a sorted set.
