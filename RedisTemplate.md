@@ -377,6 +377,19 @@ for (ZSetOperations.TypedTuple<Object> score : topScores) {
 
 This will print out the top 10 players and their scores, in the format "player: score".
 
+
+Here are some other useful methods available on redisTemplate.opsForZSet():
+
+zCard(): Returns the number of elements in the sorted set.
+zCount(): Returns the number of elements in the sorted set within a specific score range.
+zIncrBy(): Increments the score of an element in the sorted set by a specified amount.
+zIntersectAndStore(): Intersects multiple sorted sets and stores the result in a new sorted set.
+zRangeByScore(): Returns a range of elements from the sorted set, with scores within a specific range.
+zRank(): Returns the rank of an element in the sorted set, based on its score.
+zRemRangeByRank(): Removes a range of elements from the sorted set, based on their rank.
+zRemRangeByScore(): Removes a range of elements from the sorted set, based on their score.
+zUnionAndStore(): Unions multiple sorted sets and stores the result in a new sorted set.
+
 =========
 
 So in redis, you can store data with key types -
