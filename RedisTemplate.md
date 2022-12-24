@@ -115,7 +115,7 @@ In this example, we use a string as the key and a list of SomeObject instances a
 You can use a similar approach to store and retrieve sets as values with RedisTemplate. Just replace the List type with the Set type in the code above. Keep in mind that you cannot use a set or list as the key with RedisTemplate.
 
 
-===============================================================
+==============================================================================================================
 
 **type of oepration on RedisTemplate:**
 
