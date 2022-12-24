@@ -115,7 +115,7 @@ In this example, we use a string as the key and a list of SomeObject instances a
 You can use a similar approach to store and retrieve sets as values with RedisTemplate. Just replace the List type with the Set type in the code above. Keep in mind that you cannot use a set or list as the key with RedisTemplate.
 
 
-==============================================================================================================
+=======================================================================================================
 
 **type of oepration on RedisTemplate:**
 
@@ -390,7 +390,7 @@ Here are some other useful methods available on redisTemplate.opsForZSet():
 * zRemRangeByScore(): Removes a range of elements from the sorted set, based on their score.
 * zUnionAndStore(): Unions multiple sorted sets and stores the result in a new sorted set.
 
-=========
+=======================================================================================================
 
 So in redis, you can store data with key types -
 * any primitive types (such as Integer, Long, Byte, etc)
