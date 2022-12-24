@@ -466,7 +466,7 @@ This example defines the addScores() method to add scores to a sorted set, the g
 The main method adds scores to the sorted sets with keys "set1", "set2", and "set3", and then intersects these sets and stores the result in the sorted set with key "intersection". It then retrieves and prints out
 
 And it will print the following:
-```json
+```JavaScript
 a: 6
 b: 9
 c: 8
