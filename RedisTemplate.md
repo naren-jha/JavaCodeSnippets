@@ -390,6 +390,98 @@ Here are some other useful methods available on redisTemplate.opsForZSet():
 * zRemRangeByScore(): Removes a range of elements from the sorted set, based on their score.
 * zUnionAndStore(): Unions multiple sorted sets and stores the result in a new sorted set.
 
+
+Here is an example of how you can use the zIntersectAndStore() method to intersect multiple sorted sets and store the result in a new sorted set:
+```Java
+@Autowired
+private RedisTemplate<String, Object> redisTemplate;
+
+public void intersectSortedSets(String destKey, String... keys) {
+    redisTemplate.opsForZSet().intersectAndStore(destKey, Arrays.asList(keys));
+}
+```
+This method uses the intersectAndStore() method to intersect the sorted sets with the specified keys, and store the result in the sorted set with key destKey.
+
+You can use this method to intersect multiple sorted sets and store the result in a new sorted set. For example:
+
+```Java
+intersectSortedSets("intersection", "set1", "set2", "set3");
+```
+
+This will intersect the sorted sets with keys "set1", "set2", and "set3", and store the result in the sorted set with key "intersection".
+
+When you intersect multiple sorted sets, the result is a new sorted set that contains only the elements that are present in all of the input sets, with the scores of these elements being the sum of their scores across all the input sets.
+
+For example, if you have the following sorted sets:
+
+* set1: {(a, 1), (b, 2), (c, 3)}
+* set2: {(a, 2), (b, 3), (d, 4)}
+* set3: {(a, 3), (b, 4), (c, 5)}
+
+Then the result of intersecting these sets would be:
+
+* intersection: {(a, 6), (b, 9), (c, 8)}
+
+As you can see, the element "a" is present in all three sets, with a score of 1 in set1, 2 in set2, and 3 in set3. The element "b" is present in all three sets, with a score of 2 in set1, 3 in set2, and 4 in set3. The element "c" is present in sets 1 and 3, with a score of 3 in set1 and 5 in set3. The element "d" is present only in set2, so it is not included in the intersection.
+
+Here is an example of intersecting sorted sets with different elements:
+
+```Java
+@Autowired
+private RedisTemplate<String, Object> redisTemplate;
+
+public void intersectSortedSets(String destKey, String... keys) {
+    redisTemplate.opsForZSet().intersectAndStore(destKey, Arrays.asList(keys));
+}
+
+public void addScores(String key, String element, double score) {
+    redisTemplate.opsForZSet().add(key, element, score);
+}
+
+public Set<ZSetOperations.TypedTuple<Object>> getAllScores(String key) {
+    return redisTemplate.opsForZSet().rangeWithScores(key, 0, -1);
+}
+
+public static void main(String[] args) {
+    addScores("set1", "a", 1);
+    addScores("set1", "b", 2);
+    addScores("set1", "c", 3);
+    addScores("set2", "a", 2);
+    addScores("set2", "b", 3);
+    addScores("set2", "d", 4);
+    addScores("set3", "a", 3);
+    addScores("set3", "b", 4);
+    addScores("set3", "c", 5);
+
+    intersectSortedSets("intersection", "set1", "set2", "set3");
+    Set<ZSetOperations.TypedTuple<Object>> scores = getAllScores("intersection");
+    for (ZSetOperations.TypedTuple<Object> score : scores) {
+        System.out.println(score.getValue() + ": " + score.getScore());
+    }
+}
+```
+
+This example defines the addScores() method to add scores to a sorted set, the getAllScores() method to retrieve all the scores from a sorted set, and the intersectSortedSets() method to intersect multiple sorted sets and store the result in a new sorted set.
+
+The main method adds scores to the sorted sets with keys "set1", "set2", and "set3", and then intersects these sets and stores the result in the sorted set with key "intersection". It then retrieves and prints out
+
+And it will print the following:
+```json
+a: 6
+b: 9
+c: 8
+```
+
+This is because the sorted sets with keys "set1", "set2", and "set3" contain the following elements and scores:
+
+* set1: {(a, 1), (b, 2), (c, 3)}
+* set2: {(a, 2), (b, 3), (d, 4)}
+* set3: {(a, 3), (b, 4), (c, 5)}
+
+The result of intersecting these sets is a new sorted set with key "intersection", which contains the following elements and scores:
+
+* intersection: {(a, 6), (b, 9), (c, 8)}
+
 =======================================================================================================
 
 So in redis, you can store data with key types -
