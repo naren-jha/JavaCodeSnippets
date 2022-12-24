@@ -121,13 +121,13 @@ You can use a similar approach to store and retrieve sets as values with RedisTe
 
 Here are some other useful methods that are available on the RedisTemplate:
 
-opsForHash(): Provides operations for working with hash data structures in Redis.
+**opsForHash():** Provides operations for working with hash data structures in Redis.
 
-opsForList(): Provides operations for working with lists in Redis.
+**opsForList():** Provides operations for working with lists in Redis.
 
-opsForSet(): Provides operations for working with sets in Redis.
+**opsForSet():** Provides operations for working with sets in Redis.
 
-opsForZSet(): Provides operations for working with sorted sets (zsets) in Redis.
+**opsForZSet():** Provides operations for working with sorted sets (zsets) in Redis.
 
 Here are some examples of how you can use these methods:
 
@@ -146,6 +146,7 @@ redisTemplate.opsForZSet().add("zset-key", "value", 1.0);
 ```
 
 **opsForHash():**
+
 The opsForHash() method of the RedisTemplate provides operations for working with hash data structures in Redis.
 
 A **Redis hash** is a data structure that maps keys to values, similar to a Java Map. You can use hashes to store collections of key-value pairs, and you can use the opsForHash() methods to manipulate the contents of a hash.
@@ -180,6 +181,7 @@ Apart from simply storing key-value in redis, redis also allows you to work on i
 
 
 **opsForList():**
+
 The opsForList() method of the RedisTemplate provides operations for working with lists in Redis.
 
 A Redis list is a data structure that represents an ordered collection of elements. You can use lists to store sequences of items, such as messages in a queue or log entries. You can use the opsForList() methods to manipulate the contents of a list.
