@@ -204,6 +204,10 @@ public List<Object> getAllFromList(String key) {
     return redisTemplate.opsForList().range(key, 0, -1);
 }
 
+public List<Object> getListRange(String key, long start, long end) {
+    return redisTemplate.opsForList().range(key, start, end);
+}
+
 public void deleteFromList(String key, long count, Object value) {
     redisTemplate.opsForList().remove(key, count, value);
 }
@@ -211,7 +215,9 @@ public void deleteFromList(String key, long count, Object value) {
 
 This example shows how you can use the leftPush() method to add an element to the head of a list, the rightPop() method to remove and return the last element in a list, the range() method to retrieve a range of elements from a list, and the remove() method to remove elements from a list.
 
-example:
+the range() method is used to retrieve a range of elements from the list with a given key. The start and end parameters specify the index of the first and last elements to retrieve, respectively. To get all elements pass start=0 and end=-1.
+
+another example:
 ```Java
 redisTemplate.opsForList().leftPush('x', 1);
 redisTemplate.opsForList().leftPush('x', 2);
@@ -224,4 +230,20 @@ System.out.println(redisTemplate.opsForList().rightPop('x')); // 1
 
 System.out.println(redisTemplate.opsForList().rightPop('x')); // 2
 // at this point list ['y'] will contain the elements [4, 3]
+```
+
+another example:
+```Java
+redisTemplate.opsForList().leftPush('y', 1);
+redisTemplate.opsForList().leftPush('y', 2);
+redisTemplate.opsForList().leftPush('y', 3);
+redisTemplate.opsForList().leftPush('y', 4);
+redisTemplate.opsForList().leftPush('y', 5);
+redisTemplate.opsForList().leftPush('y', 6);
+// at this point list ['y'] will contain the elements [6, 5, 4, 3, 2, 1]
+
+List<Object> range1 = getListRange("y", 0, 1); // will give you [6, 5]
+List<Object> range2 = getListRange("y", 0, 2); // will give you [6, 5, 4]
+List<Object> range3 = getListRange("y", 2, 4); // will give you [4, 3, 2]
+List<Object> range4 = getListRange("y", 0, -1); // will give you [6, 5, 4, 3, 2, 1]
 ```
