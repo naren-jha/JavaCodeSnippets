@@ -121,13 +121,13 @@ You can use a similar approach to store and retrieve sets as values with RedisTe
 
 Here are some other useful methods that are available on the RedisTemplate:
 
-**opsForHash():** Provides operations for working with hash data structures in Redis.
+* **opsForHash():** Provides operations for working with hash data structures in Redis.
 
-**opsForList():** Provides operations for working with lists in Redis.
+* **opsForList():** Provides operations for working with lists in Redis.
 
-**opsForSet():** Provides operations for working with sets in Redis.
+* **opsForSet():** Provides operations for working with sets in Redis.
 
-**opsForZSet():** Provides operations for working with sorted sets (zsets) in Redis.
+* **opsForZSet():** Provides operations for working with sorted sets (zsets) in Redis.
 
 Here are some examples of how you can use these methods:
 
@@ -380,15 +380,15 @@ This will print out the top 10 players and their scores, in the format "player: 
 
 Here are some other useful methods available on redisTemplate.opsForZSet():
 
-zCard(): Returns the number of elements in the sorted set.
-zCount(): Returns the number of elements in the sorted set within a specific score range.
-zIncrBy(): Increments the score of an element in the sorted set by a specified amount.
-zIntersectAndStore(): Intersects multiple sorted sets and stores the result in a new sorted set.
-zRangeByScore(): Returns a range of elements from the sorted set, with scores within a specific range.
-zRank(): Returns the rank of an element in the sorted set, based on its score.
-zRemRangeByRank(): Removes a range of elements from the sorted set, based on their rank.
-zRemRangeByScore(): Removes a range of elements from the sorted set, based on their score.
-zUnionAndStore(): Unions multiple sorted sets and stores the result in a new sorted set.
+* zCard(): Returns the number of elements in the sorted set.
+* zCount(): Returns the number of elements in the sorted set within a specific score range.
+* zIncrBy(): Increments the score of an element in the sorted set by a specified amount.
+* zIntersectAndStore(): Intersects multiple sorted sets and stores the result in a new sorted set.
+* zRangeByScore(): Returns a range of elements from the sorted set, with scores within a specific range.
+* zRank(): Returns the rank of an element in the sorted set, based on its score.
+* zRemRangeByRank(): Removes a range of elements from the sorted set, based on their rank.
+* zRemRangeByScore(): Removes a range of elements from the sorted set, based on their score.
+* zUnionAndStore(): Unions multiple sorted sets and stores the result in a new sorted set.
 
 =========
 
