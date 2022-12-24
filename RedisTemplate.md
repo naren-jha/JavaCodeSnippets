@@ -377,3 +377,19 @@ for (ZSetOperations.TypedTuple<Object> score : topScores) {
 
 This will print out the top 10 players and their scores, in the format "player: score".
 
+=========
+
+So in redis, you can store data with key types -
+* any primitive types (such as Integer, Long, Byte, etc)
+* String 
+* Any User Defined type (but you'll have to override and implement equals() and hashCode() methods for the given type class)
+
+And value types -
+* primitives
+* String
+* User defined types
+* List (Redis List)
+* Map (Redis Hash)
+* Set (Redis Set)
+* SortedSet (Redis ZSet)
+
