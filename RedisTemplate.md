@@ -304,3 +304,54 @@ public void removeFromZSet(String key, Object... values) {
 ```
 
 This example shows how you can use the add() method to add an element to a sorted set with a specific score, the range() method to retrieve a range of elements from a sorted set, and the remove() method to remove one or more elements from a sorted set.
+
+Here is an example of how you can use a Redis sorted set to implement a game leaderboard:
+
+```Java
+@Autowired
+private RedisTemplate<String, Object> redisTemplate;
+
+public void addScore(String user, double score) {
+    redisTemplate.opsForZSet().add("leaderboard", user, score);
+}
+
+public Set<Object> getTopScores(long count) {
+    return redisTemplate.opsForZSet().reverseRange("leaderboard", 0, count - 1);
+}
+
+public Double getUserScore(String user) {
+    return redisTemplate.opsForZSet().score("leaderboard", user);
+}
+
+public Long getRank(String user) {
+    return redisTemplate.opsForZSet().reverseRank("leaderboard", user);
+}
+
+```
+
+This example uses a sorted set with key "leaderboard" to store the scores of players in the game. The addScore() method adds a score for a user to the leaderboard, the getTopScores() method retrieves the top scores from the leaderboard, the getUserScore() method retrieves the score of a specific user, and the getRank() method retrieves the rank of a specific user on the leaderboard.
+
+You can use these methods to implement a leaderboard for your game. For example, you can use the addScore() method to add a score for a player whenever they complete a level or achieve a high score, the getTopScores() method to retrieve the top scores and display them on a leaderboard, and the getUserScore() and getRank() methods to show a player their own score and rank.
+
+Here is how you can use the zRangeWithScores() method to retrieve all players and their scores from the leaderboard:
+```Java
+@Autowired
+private RedisTemplate<String, Object> redisTemplate;
+
+public Set<ZSetOperations.TypedTuple<Object>> getAllScores() {
+    return redisTemplate.opsForZSet().zRangeWithScores("leaderboard", 0, -1);
+}
+```
+
+This method uses the zRangeWithScores() method to retrieve all elements from the sorted set with key "leaderboard", along with their scores. It returns a Set of TypedTuple objects, which contain the element and its score.
+
+You can use this method to retrieve all the players and their scores from the leaderboard and display them in your game. For example:
+```Java
+Set<ZSetOperations.TypedTuple<Object>> scores = getAllScores();
+for (ZSetOperations.TypedTuple<Object> score : scores) {
+    System.out.println(score.getValue() + ": " + score.getScore());
+}
+```
+
+This will print out all the players and their scores, in the format "player: score".
+
