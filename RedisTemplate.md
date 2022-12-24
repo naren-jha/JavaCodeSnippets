@@ -482,6 +482,65 @@ The result of intersecting these sets is a new sorted set with key "intersection
 
 * intersection: {(a, 6), (b, 9), (c, 8)}
 
+Similarly you can also do Union
+
+Here is an example of using the zUnionAndStore() method to union multiple sorted sets and store the result in a new sorted set:
+```Java
+@Autowired
+private RedisTemplate<String, Object> redisTemplate;
+
+public void unionSortedSets(String destKey, String... keys) {
+    redisTemplate.opsForZSet().unionAndStore(destKey, Arrays.asList(keys));
+}
+
+public void addScores(String key, String element, double score) {
+    redisTemplate.opsForZSet().add(key, element, score);
+}
+
+public Set<ZSetOperations.TypedTuple<Object>> getAllScores(String key) {
+    return redisTemplate.opsForZSet().rangeWithScores(key, 0, -1);
+}
+
+public static void main(String[] args) {
+    addScores("set1", "a", 1);
+    addScores("set1", "b", 2);
+    addScores("set1", "c", 3);
+    addScores("set2", "a", 2);
+    addScores("set2", "b", 3);
+    addScores("set2", "d", 4);
+    addScores("set3", "a", 3);
+    addScores("set3", "b", 4);
+    addScores("set3", "c", 5);
+
+    unionSortedSets("union", "set1", "set2", "set3");
+    Set<ZSetOperations.TypedTuple<Object>> scores = getAllScores("union");
+    for (ZSetOperations.TypedTuple<Object> score : scores) {
+        System.out.println(score.getValue() + ": " + score.getScore());
+    }
+}
+```
+
+This example defines the addScores() method to add scores to a sorted set, the getAllScores() method to retrieve all the scores from a sorted set, and the unionSortedSets() method to union multiple sorted sets and store the result in a new sorted set.
+
+The main method adds scores to the sorted sets with keys "set1", "set2", and "set3", and then unions these sets and stores the result in the sorted set with key "union". It then retrieves and prints out all the scores from the sorted.
+
+And it will print the following:
+```JavaScript
+a: 3
+b: 4
+c: 5
+d: 4
+```
+
+This is because the sorted sets with keys "set1", "set2", and "set3" contain the following elements and scores:
+
+set1: {(a, 1), (b, 2), (c, 3)}
+set2: {(a, 2), (b, 3), (d, 4)}
+set3: {(a, 3), (b, 4), (c, 5)}
+The result of unioning these sets is a new sorted set with key "union", which contains all the elements from the input sets, with the scores being the maximum of their scores across all the input sets. This results in the following elements and scores:
+
+union: {(a, 3), (b, 4), (c, 5), (d, 4)}
+
 =======================================================================================================
 
 So in redis, you can store data with key types -
