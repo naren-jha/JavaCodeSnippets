@@ -87,7 +87,7 @@ SomeObject value = template.opsForValue().get(new MyKey("hello", 123));
 In this example, we define a MyKey class that has two fields: field1 and field2. We implement the hashCode() and equals() methods in MyKey so that RedisTemplate can properly store and retrieve the values associated with keys of this type. We then use an instance of MyKey as the key when setting and getting values with RedisTemplate.
 
 
-**Can we use a List or Set as key in Redis? **
+**Can we use a List or Set as key in Redis?**
 
 You can't.
 
