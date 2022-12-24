@@ -355,3 +355,25 @@ for (ZSetOperations.TypedTuple<Object> score : scores) {
 
 This will print out all the players and their scores, in the format "player: score".
 
+Similarly, you can modify the getTopScores() method to return both players and their scores instead of just scores:
+```Java
+@Autowired
+private RedisTemplate<String, Object> redisTemplate;
+
+public Set<ZSetOperations.TypedTuple<Object>> getTopScores(long count) {
+    return redisTemplate.opsForZSet().reverseRangeWithScores("leaderboard", 0, count - 1);
+}
+```
+
+This method uses the reverseRangeWithScores() method to retrieve the top count elements from the sorted set with key "leaderboard", along with their scores, in reverse order (highest to lowest). It returns a Set of TypedTuple objects, which contain the element and its score.
+
+You can use this method to retrieve the top players and their scores from the leaderboard and display them in your game. For example:
+```Java
+Set<ZSetOperations.TypedTuple<Object>> topScores = getTopScores(10);
+for (ZSetOperations.TypedTuple<Object> score : topScores) {
+    System.out.println(score.getValue() + ": " + score.getScore());
+}
+```
+
+This will print out the top 10 players and their scores, in the format "player: score".
+
