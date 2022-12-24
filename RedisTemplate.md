@@ -118,6 +118,7 @@ You can use a similar approach to store and retrieve sets as values with RedisTe
 ===============================================================
 
 **type of oepration on RedisTemplate:**
+
 Here are some other useful methods that are available on the RedisTemplate:
 
 opsForHash(): Provides operations for working with hash data structures in Redis.
