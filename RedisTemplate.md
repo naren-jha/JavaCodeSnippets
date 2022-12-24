@@ -122,9 +122,13 @@ You can use a similar approach to store and retrieve sets as values with RedisTe
 Here are some other useful methods that are available on the RedisTemplate:
 
 opsForHash(): Provides operations for working with hash data structures in Redis.
+
 opsForList(): Provides operations for working with lists in Redis.
+
 opsForSet(): Provides operations for working with sets in Redis.
+
 opsForZSet(): Provides operations for working with sorted sets (zsets) in Redis.
+
 Here are some examples of how you can use these methods:
 
 ```Java
