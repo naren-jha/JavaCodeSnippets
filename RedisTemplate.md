@@ -384,7 +384,7 @@ Here are some other useful methods available on redisTemplate.opsForZSet():
 * zCount(): Returns the number of elements in the sorted set within a specific score range.
 * zIncrBy(): Increments the score of an element in the sorted set by a specified amount.
 * zIntersectAndStore(): Intersects multiple sorted sets and stores the result in a new sorted set.
-* zRangeByScore(): Returns a range of elements from the sorted set, with scores within a specific range.
+* zRangeByScore(): Returns a range of elements (with scores) from the sorted set.
 * zRank(): Returns the rank of an element in the sorted set, based on its score.
 * zRemRangeByRank(): Removes a range of elements from the sorted set, based on their rank.
 * zRemRangeByScore(): Removes a range of elements from the sorted set, based on their score.
