@@ -537,6 +537,7 @@ This is because the sorted sets with keys "set1", "set2", and "set3" contain the
 * set1: {(a, 1), (b, 2), (c, 3)}
 * set2: {(a, 2), (b, 3), (d, 4)}
 * set3: {(a, 3), (b, 4), (c, 5)}
+
 The result of unioning these sets is a new sorted set with key "union", which contains all the elements from the input sets, with the scores being the maximum of their scores across all the input sets. This results in the following elements and scores:
 
 * union: {(a, 3), (b, 4), (c, 5), (d, 4)}
