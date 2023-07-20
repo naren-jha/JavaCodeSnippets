@@ -1,3 +1,6 @@
+# Settipng up redisson client
+
+## redisson maven dependency
 First add redisson dpendency in pom.xml as below - 
 ```Java
 <dependency>
@@ -7,6 +10,7 @@ First add redisson dpendency in pom.xml as below -
 </dependency>
 ```
 
+## redisson client configuration to work in cluster mode
 Then write a redisson client as below -
 
 ```Java
@@ -108,7 +112,7 @@ public class RedissonClientHelper {
 }
 ```
 
-# Working with key-value data structure using redisson
+## Working with redis key-value data structure using redisson
 ```Java
 ObjectMapper objectMapper = new ObjectMapper();
 String jsonValue = objectMapper.writeValueAsString(objectToStore);
@@ -149,3 +153,32 @@ public class RedissonKeyValueHelper {
 }
 ```
 
+## Working with redis hash data structure 
+```Java
+import org.redisson.api.RMap;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class RedissonMapHelper {
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    public void setHashValue(String key, String field, String value) {
+        RMap<String, String> map = redissonClient.getMap(key);
+        map.put(field, value);
+    }
+
+    public String getHashValue(String key, String field) {
+        RMap<String, String> map = redissonClient.getMap(key);
+        return map.get(field);
+    }
+
+    public void deleteHashField(String key, String field) {
+        RMap<String, String> map = redissonClient.getMap(key);
+        map.remove(field);
+    }
+}
+```
