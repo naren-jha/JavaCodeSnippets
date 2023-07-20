@@ -1,4 +1,13 @@
-First add a redisson client as below -
+First add redisson dpendency in pom.xml as below - 
+```Java
+<dependency>
+    <groupId>org.redisson</groupId>
+    <artifactId>redisson</artifactId>
+    <version>3.19.2</version>
+</dependency>
+```
+
+Then write a redisson client as below -
 
 ```Java
 import org.redisson.Redisson;
