@@ -399,3 +399,24 @@ The performTaskWithLock() method shows an example of performing a task while hol
 The tryLock() method demonstrates trying to acquire the lock with a timeout. It attempts to acquire the lock using lock.tryLock(timeout, TimeUnit) and returns true if the lock is acquired within the specified timeout. If the lock acquisition is interrupted, it returns false.
 
 The releaseLock() method is used to explicitly release the lock. It checks if the lock is still held (isLocked()) and calls unlock() to release it.
+
+
+## Using Redisson's distributed pub/sub feature
+```Java
+// Create a Redisson client
+RedissonClient redisson = Redisson.create();
+
+// Get a distributed topic instance
+RTopic<String> topic = redisson.getTopic("myDistributedTopic");
+
+// Subscribe to the topic
+topic.addListener(String.class, (channel, message) -> {
+    System.out.println("Received message: " + message);
+});
+
+// Publish a message to the topic
+topic.publish("Hello, Redisson!");
+
+// Close the Redisson client
+redisson.shutdown();
+```
