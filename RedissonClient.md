@@ -112,7 +112,7 @@ public class RedissonClientHelper {
 }
 ```
 
-## Working with redis key-value data structure using redisson
+## Working with redis Key-Value data structure using redisson
 ```Java
 ObjectMapper objectMapper = new ObjectMapper();
 String jsonValue = objectMapper.writeValueAsString(objectToStore);
@@ -153,7 +153,7 @@ public class RedissonKeyValueHelper {
 }
 ```
 
-## Working with redis hash data structure 
+## Working with redis Hash data structure 
 ```Java
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
@@ -179,6 +179,164 @@ public class RedissonMapHelper {
     public void deleteHashField(String key, String field) {
         RMap<String, String> map = redissonClient.getMap(key);
         map.remove(field);
+    }
+}
+```
+
+## Working with redis List data structure 
+```Java
+import org.redisson.api.RList;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class RedissonListHelper {
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    public void addToList(String key, String value) {
+        RList<String> list = redissonClient.getList(key);
+        list.add(value);
+    }
+
+    public String getFromList(String key, int index) {
+        RList<String> list = redissonClient.getList(key);
+        return list.get(index);
+    }
+
+    public void removeFromList(String key, String value) {
+        RList<String> list = redissonClient.getList(key);
+        list.remove(value);
+    }
+
+    public int getListSize(String key) {
+        RList<String> list = redissonClient.getList(key);
+        return list.size();
+    }
+}
+```
+
+## Working with redis Set data structure
+```Java
+import org.redisson.api.RSet;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class RedissonSetHelper {
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    public void addToSet(String key, String value) {
+        RSet<String> set = redissonClient.getSet(key);
+        set.add(value);
+    }
+
+    public boolean isMemberOfSet(String key, String value) {
+        RSet<String> set = redissonClient.getSet(key);
+        return set.contains(value);
+    }
+
+    public void removeFromSet(String key, String value) {
+        RSet<String> set = redissonClient.getSet(key);
+        set.remove(value);
+    }
+
+    public int getSetSize(String key) {
+        RSet<String> set = redissonClient.getSet(key);
+        return set.size();
+    }
+}
+```
+
+## Working with redis SortedSet data structure
+```Java
+import org.redisson.api.RSortedSet;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class RedissonSortedSetHelper {
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    public void addToSortedSet(String key, String value, double score) {
+        RSortedSet<String> sortedSet = redissonClient.getSortedSet(key);
+        sortedSet.add(score, value);
+    }
+
+    public boolean isMemberOfSortedSet(String key, String value) {
+        RSortedSet<String> sortedSet = redissonClient.getSortedSet(key);
+        return sortedSet.contains(value);
+    }
+
+    public void removeFromSortedSet(String key, String value) {
+        RSortedSet<String> sortedSet = redissonClient.getSortedSet(key);
+        sortedSet.remove(value);
+    }
+
+    public int getSortedSetSize(String key) {
+        RSortedSet<String> sortedSet = redissonClient.getSortedSet(key);
+        return sortedSet.size();
+    }
+}
+```
+
+## Working with redisson distributed lock
+```Java
+import org.redisson.Redisson;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.concurrent.TimeUnit;
+
+@Component
+public class RedissonLockHelper {
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    public void performTaskWithLock(String lockKey) {
+        RLock lock = redissonClient.getLock(lockKey);
+
+        try {
+            // Acquire the lock
+            lock.lock();
+
+            // Perform your task here
+            // ...
+
+        } finally {
+            // Release the lock
+            lock.unlock();
+        }
+    }
+
+    public boolean tryLock(String lockKey, long timeoutSeconds) {
+        RLock lock = redissonClient.getLock(lockKey);
+
+        try {
+            // Try to acquire the lock with a timeout
+            return lock.tryLock(timeoutSeconds, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
+    }
+
+    public void releaseLock(String lockKey) {
+        RLock lock = redissonClient.getLock(lockKey);
+        if (lock.isLocked()) {
+            lock.unlock();
+        }
     }
 }
 ```
