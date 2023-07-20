@@ -523,6 +523,133 @@ The getValueAsync() method is used to retrieve a value asynchronously from the R
 By using CompletableFuture and the asynchronous versions of cache operations provided by RMapCacheAsync, you can perform cache operations asynchronously, allowing for potentially improved performance and scalability in scenarios where parallelism and non-blocking operations are desired.
 
 
+### Batch Operations using RMapCache and RBatch:
+```Java
+import org.redisson.api.RBatch;
+import org.redisson.api.RMapCache;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class RedissonMapCacheBatchHelper {
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    public void performBatchOperations(String mapCacheKey) {
+        RMapCache<String, String> mapCache = redissonClient.getMapCache(mapCacheKey);
+        RBatch batch = redissonClient.createBatch();
+
+        // Add multiple cache operations to the batch
+        batch.getMapCache(mapCacheKey).putAsync("key1", "value1");
+        batch.getMapCache(mapCacheKey).putAsync("key2", "value2");
+        batch.getMapCache(mapCacheKey).putAsync("key3", "value3");
+        // Add more cache operations as needed
+
+        // Execute the batch operations
+        batch.execute();
+
+        // Access the results if needed
+        // ...
+    }
+
+    // ...
+}
+```
+
+The performBatchOperations() method sets up a batch context by creating an instance of RBatch using redissonClient.createBatch(). Then, multiple cache operations are added to the batch using putAsync() on the RMapCache instance retrieved from RBatch. These operations can include put, remove, or any other cache operation supported by RMapCache.
+
+After adding all the cache operations to the batch, batch.execute() is called to execute all the operations atomically in a single network round-trip. This improves performance by reducing the number of network round-trips and provides atomicity for the batch operations.
+
+If you need to access the results of individual cache operations within the batch, you can do so after calling batch.execute(). The batch execution will return the results, and you can process them accordingly.
+
+By leveraging batch operations with RBatch, you can perform multiple cache operations on RMapCache in a single atomic batch, resulting in improved performance and reduced network overhead.
+
+#### Using batch for get operation as well
+```Java
+import org.redisson.api.RBatch;
+import org.redisson.api.RMapCache;
+import org.redisson.api.RedissonClient;
+import org.redisson.api.BatchResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.concurrent.ExecutionException;
+
+@Component
+public class RedissonMapCacheBatchHelper {
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    public void performBatchGetOperations(String mapCacheKey) throws ExecutionException, InterruptedException {
+        RMapCache<String, String> mapCache = redissonClient.getMapCache(mapCacheKey);
+        RBatch batch = redissonClient.createBatch();
+
+        // Add multiple cache get operations to the batch
+        batch.getMapCache(mapCacheKey).getAsync("key1");
+        batch.getMapCache(mapCacheKey).getAsync("key2");
+        batch.getMapCache(mapCacheKey).getAsync("key3");
+        // Add more cache get operations as needed
+
+        // Execute the batch operations
+        BatchResult<?> batchResult = batch.execute();
+
+        // Access the results of individual cache get operations
+        String value1 = (String) batchResult.getResponses().get(0).get();
+        String value2 = (String) batchResult.getResponses().get(1).get();
+        String value3 = (String) batchResult.getResponses().get(2).get();
+
+        System.out.println("Value 1: " + value1);
+        System.out.println("Value 2: " + value2);
+        System.out.println("Value 3: " + value3);
+    }
+
+    // ...
+}
+```
+
+The `batch.execute();` operation is an async operation. It initiates the execution of all the operations added to the batch, and it returns a BatchResult object immediately.
+
+The BatchResult object provides a way to access the results of the individual operations performed in the batch. It contains a list of RFuture objects that represent the asynchronous results of each operation.
+
+While the batch.execute() method itself is asynchronous and non-blocking, the blocking call to retrieve the results of the individual operations happens when you invoke the get() method on each RFuture object.
+
+In the example code, when you call `batchResult.getResponses().get(0).get()`, it blocks the current thread until the result of the first operation becomes available. The get() method waits for the result and returns the value once it is ready.
+
+Therefore, the blocking call occurs when you access the results of individual operations using the get() method. Keep in mind that if you're retrieving multiple results sequentially using get(), it may introduce blocking behavior that waits for each result to complete before proceeding to the next one.
+
+If you want to handle the results asynchronously without blocking, you can use the thenAcceptAsync() or thenApplyAsync() methods on the RFuture objects to specify callbacks or transformation functions to process the results when they become available. This way, you can achieve non-blocking behavior and continue processing other tasks while waiting for the results to complete.
+
+**What's the difference between thenAcceptAsync and thenApplyAsync ?**
+The thenAcceptAsync() and thenApplyAsync() methods are both part of the RFuture interface in Redisson, which represents an asynchronous result of a Redisson operation. Both methods allow you to specify callbacks to handle the result of the operation asynchronously. However, there is a difference in their return types and intended usage:
+
+1. thenAcceptAsync(): This method is used for asynchronous result handling without returning a value. It takes a Consumer functional interface as a parameter, which represents a callback function that accepts the result as input and performs some action. The thenAcceptAsync() method returns a CompletableFuture<Void> that represents the completion of the callback action.
+
+```Java
+RFuture<String> future = ...;
+future.thenAcceptAsync(result -> {
+    // Handle the result asynchronously
+    // Perform some action with the result
+});
+```
+
+2. thenApplyAsync(): This method is used for asynchronous result handling with the ability to transform the result. It takes a Function functional interface as a parameter, which represents a transformation function that accepts the result as input, performs some computation, and returns a new value. The thenApplyAsync() method returns a CompletableFuture<U> where U is the type of the transformed result.
+```Java
+RFuture<String> future = ...;
+CompletableFuture<Integer> transformedFuture = future.thenApplyAsync(result -> {
+    // Transform the result asynchronously
+    // Perform some computation based on the result and return a new value
+    return result.length();
+});
+```
+
+In summary, thenAcceptAsync() is used when you want to perform some action asynchronously with the result, without returning a value. On the other hand, thenApplyAsync() is used when you want to perform a computation asynchronously based on the result and return a transformed value.
+
+Both methods allow you to handle the results asynchronously without blocking the current thread, providing flexibility in handling the asynchronous outcomes of Redisson operations.
+
+
 ## Working with redis List data structure 
 ```Java
 import org.redisson.api.RList;
