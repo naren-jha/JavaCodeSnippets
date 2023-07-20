@@ -451,3 +451,99 @@ redisson.shutdown();
 
 ## Redisson vs Lettuce
 <img width="736" alt="image" src="https://github.com/naren-jha/JavaCodeSnippets/assets/58611230/df432fd4-5d09-4a3e-a92e-bb5067d03c41">
+
+## Using distributed task (across JVM) in redisson
+
+Here's an example that demonstrates how to use Redisson's distributed task scheduling feature:
+```Java
+// Create a Redisson client
+RedissonClient redisson = Redisson.create();
+
+// Get a distributed task scheduler
+RScheduledExecutorService executorService = redisson.getExecutorService("myExecutorService");
+
+// Define a task to be executed
+Runnable task = () -> {
+    System.out.println("Executing task...");
+    // Perform the task logic here
+};
+
+// Schedule the task to be executed every 5 seconds
+// initial delay is - 0 secs
+// period is - 5 secs
+RScheduledFuture<?> scheduledFuture = executorService.scheduleAtFixedRate(task, 0, 5, TimeUnit.SECONDS);
+
+// Wait for some time to observe task execution
+Thread.sleep(20000);
+
+// Cancel the task
+scheduledFuture.cancel();
+
+// Shut down the Redisson client
+redisson.shutdown();
+```
+In this example, Redisson's RScheduledExecutorService represents a distributed task scheduler. You can obtain an instance of the scheduler using redisson.getExecutorService("myExecutorService"). The scheduleAtFixedRate method is used to schedule a task (represented by the Runnable interface) to be executed every 5 seconds.
+
+The task logic, defined within the Runnable, will be executed by Redisson across multiple JVM instances, ensuring distributed task execution and coordination.
+
+After scheduling the task, we wait for some time (20 seconds in this example) to observe the task execution. Finally, the scheduled task is canceled using scheduledFuture.cancel(), and the Redisson client is shut down.
+
+Redisson's distributed task scheduling feature allows you to schedule and execute tasks in a distributed manner across multiple JVM instances. This is particularly useful in scenarios where tasks need to be coordinated across instances or when you want to leverage the computing power of multiple machines to execute tasks concurrently.
+
+It's important to note that Redisson's distributed task scheduling supports various scheduling options, including fixed-rate scheduling, fixed-delay scheduling, cron-based scheduling, and more. You can choose the appropriate scheduling strategy based on your specific requirements.
+
+#### this can be used as replacement for spring scheduler
+Redisson's distributed task scheduling feature can serve as a suitable replacement for the Spring Scheduler in scenarios where you require coordination and uniqueness of scheduled tasks across multiple JVM instances.
+
+While the Spring Scheduler provides task scheduling within a single JVM instance, Redisson's distributed task scheduler extends this capability to a distributed environment, allowing you to schedule and execute tasks across multiple JVM instances. It ensures that tasks are coordinated and executed uniquely across the distributed system, providing consistency and reliability.
+
+By leveraging Redisson's distributed task scheduling feature, you can overcome the limitations of scheduling tasks within a single JVM and achieve distributed task execution with ease. This is especially valuable in scenarios where you have a microservices architecture or a distributed system where tasks need to be executed across multiple instances.
+
+Redisson's distributed task scheduler not only handles coordination and uniqueness but also offers advanced scheduling options, task cancellation, error handling, and various execution strategies. It provides a comprehensive solution for managing and executing tasks in a distributed environment.
+
+So, if you require task scheduling with coordination and uniqueness across JVM instances, Redisson's distributed task scheduler can be a powerful and reliable alternative to the Spring Scheduler. It enhances the capabilities of task scheduling in a distributed system and enables you to build robust and scalable applications.
+
+#### Fixed-Rate Scheduling:
+```Java
+RScheduledFuture<?> scheduledFuture = executorService.scheduleAtFixedRate(task, initialDelay, period, timeUnit);
+```
+This schedules the task to be executed at a fixed rate, where initialDelay specifies the delay before the first execution, period represents the time duration between consecutive executions, and timeUnit denotes the unit of time for the delay and period values.
+
+#### Fixed-Delay Scheduling:
+```Java
+RScheduledFuture<?> scheduledFuture = executorService.scheduleWithFixedDelay(task, initialDelay, delay, timeUnit);
+```
+This schedules the task to be executed with a fixed delay between the completion of one execution and the start of the next. initialDelay indicates the delay before the first execution, delay represents the delay between consecutive executions, and timeUnit specifies the unit of time for the delay values.
+
+#### Cron-Based Scheduling:
+```Java
+RScheduledFuture<?> scheduledFuture = executorService.scheduleCron(task, cronExpression);
+```
+This schedules the task to be executed based on a cron expression. The cronExpression parameter defines the specific schedule pattern for the task execution, following the cron syntax.
+
+##### Difference between Fixed-Rate Scheduling and Fixed-Delay Scheduling:
+The main difference between fixed-rate scheduling and fixed-delay scheduling is how the time intervals between task executions are determined:
+
+1. Fixed-Rate Scheduling: In fixed-rate scheduling, the period between task executions is constant, regardless of how long the task takes to execute. The next execution will start at the specified period after the previous execution completes, regardless of any delays that may have occurred. This means that tasks will be executed at a fixed rate, maintaining a consistent interval between consecutive executions.
+
+2. Fixed-Delay Scheduling: In fixed-delay scheduling, the delay between the completion of one task execution and the start of the next execution is constant. The next execution will start after the specified delay has passed since the completion of the previous execution. This means that the delay remains constant regardless of the time it takes for the task to execute.
+
+To illustrate the difference, let's consider an example:
+
+Suppose you have a task that takes 2 seconds to execute, and you schedule it with:
+```Java
+executorService.scheduleAtFixedRate(task, 0, 5, TimeUnit.SECONDS);
+```
+With fixed-rate scheduling, the task will be executed every 5 seconds, regardless of its execution time. So, even if the task takes 2 seconds to complete, the next execution will start after 5 seconds from the previous start time.
+
+On the other hand, if you schedule the same task with fixed-delay scheduling:
+```Java
+executorService.scheduleWithFixedDelay(task, 0, 5, TimeUnit.SECONDS);
+```
+In this case, the delay between the completion of one execution and the start of the next execution is fixed at 5 seconds. So, if the task takes 2 seconds to execute, the next execution will start after 5 seconds from the completion of the previous execution. This ensures a consistent delay between consecutive task executions.
+
+In summary, the difference lies in how the time intervals are determined:
+
+- Fixed-Rate Scheduling: Consistent period between task executions, regardless of execution time.
+- Fixed-Delay Scheduling: Consistent delay between the completion of one execution and the start of the next execution, regardless of execution time.
+
