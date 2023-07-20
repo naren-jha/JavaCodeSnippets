@@ -1,5 +1,5 @@
 
-Using RedisTemplate with different data types as key - 
+Using Spring data (jedis or lettuce) RedisTemplate with different data types as key - 
 RedisTemplate can be used with several different data types as the key, including string, long, and various primitive types. Here are some examples of using different data types as keys with RedisTemplate:
 
 **String:**
