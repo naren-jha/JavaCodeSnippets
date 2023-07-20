@@ -303,6 +303,53 @@ The maxSize parameter in mapCache.setMaxSize(maxSize) represents the maximum siz
 When the number of entries in the RMapCache reaches the maxSize, Redisson applies the configured eviction policy to make room for new entries. The eviction policy determines which entries to remove when the cache is full.
 The eviction policy set here is RMapCache.MaxSizePolicy.PER_NODE. This policy ensures that the maximum size is enforced per Redisson node rather than across the entire cluster.
 
+Similarly, we have LRU eviction policy
+```Java
+import org.redisson.api.RMapCache;
+import org.redisson.api.RedissonClient;
+import org.redisson.client.codec.StringCodec;
+import org.redisson.config.Config;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.concurrent.TimeUnit;
+
+@Component
+public class RedissonMapCacheHelper {
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    public void configureMapCacheWithLRUEviction(String mapCacheKey, int maxSize) {
+        RMapCache<String, String> mapCache = redissonClient.getMapCache(mapCacheKey);
+
+        // Set maximum size and eviction policy to LRU
+        mapCache.setMaxSize(maxSize);
+        mapCache.setMaxSizePolicy(RMapCache.MaxSizePolicy.LRU);
+    }
+
+    public void putValue(String mapCacheKey, String key, String value) {
+        RMapCache<String, String> mapCache = redissonClient.getMapCache(mapCacheKey);
+        mapCache.put(key, value);
+    }
+
+    // ...
+}
+```
+The setMaxSize() method is used to set the maximum size of the cache, indicating the maximum number of entries that can be stored. The setMaxSizePolicy() method is then used to specify the eviction policy as LRU.
+
+After configuring the LRU eviction policy, you can use the putValue() method to store key-value pairs in the RMapCache. Redisson will automatically handle the eviction of entries based on the LRU policy when the maximum size is reached. The least recently used entries will be evicted from the cache to make room for new entries.
+
+#### ALl possible eviction policies:
+Redisson's RMapCache supports several eviction policies that you can set using the setMaxSizePolicy() method. Here are the possible values for RMapCache.MaxSizePolicy:
+
+1. **RMapCache.MaxSizePolicy.REJECT:** This is the default policy. It rejects new entries when the cache reaches its maximum size limit.
+2. **RMapCache.MaxSizePolicy.PER_NODE:** Each Redisson node in a cluster or Redis deployment enforces its own maximum size independently. Entries will be evicted based on the maximum size specified per node.
+3. **RMapCache.MaxSizePolicy.LFU:** Eviction is based on the Least Frequently Used (LFU) algorithm. Entries that are accessed less frequently will be evicted first when the cache reaches its maximum size.
+4. **RMapCache.MaxSizePolicy.LRU:** Eviction is based on the Least Recently Used (LRU) algorithm. Entries that are accessed least recently will be evicted first when the cache reaches its maximum size.
+5. **RMapCache.MaxSizePolicy.SIZE:** Eviction is based on the size of the entries in the cache. Entries with larger sizes will be evicted first when the cache reaches its maximum size.
+6. **RMapCache.MaxSizePolicy.FREE_HEAP_RATIO:** Eviction is based on the ratio of free heap memory. Entries will be evicted when the free heap memory ratio falls below a certain threshold.
+
 
 ### Entry Expiry Listener with RMapCache
 ```Java
