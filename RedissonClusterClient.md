@@ -340,7 +340,7 @@ The setMaxSize() method is used to set the maximum size of the cache, indicating
 
 After configuring the LRU eviction policy, you can use the putValue() method to store key-value pairs in the RMapCache. Redisson will automatically handle the eviction of entries based on the LRU policy when the maximum size is reached. The least recently used entries will be evicted from the cache to make room for new entries.
 
-#### ALl possible eviction policies:
+#### All possible eviction policies:
 Redisson's RMapCache supports several eviction policies that you can set using the setMaxSizePolicy() method. Here are the possible values for RMapCache.MaxSizePolicy:
 
 1. **RMapCache.MaxSizePolicy.REJECT:** This is the default policy. It rejects new entries when the cache reaches its maximum size limit.
@@ -406,15 +406,20 @@ public class RedissonMapCacheHelper {
 ```
 
 So when an entry expires in the RMapCache, it will execute callback method handleExpiration().
+
 Using redisson, you can set TTL for entries in map. This feature is not provided by redis itself. In Redis, the key expiration is handled at the key level, not at the individual entry level within a map. When a key expires in Redis, the entire key and its associated values are removed.
+
 However, Redisson provides additional functionality on top of Redis, including the ability to set TTLs for individual entries within a map using the RMapCache data structure. Redisson manages the expiration of individual entries in the map by using Redis' key expiration mechanism internally.
+
 The entry listener feature in Redisson allows you to receive notifications when an entry in the RMapCache expires. It is a Redisson-specific feature that provides a convenient way to react to expiration events at the entry level.
+
 Under the hood, Redisson leverages Redis' key expiration mechanism and combines it with internal bookkeeping to provide TTL-based eviction and event notification at the entry level within a map. This allows you to handle individual entry expiration events and perform custom actions based on those events.
 
-You cannpt achieve entry level expiry (and therefore notification) using simple RMap. for that you'll have to use RMapCache.
+You cannot achieve entry level expiry (and therefore notification) using simple RMap. for that you'll have to use RMapCache.
 
-#### expiring the entire map vs espiring entries in map
+#### Expiring the entire map vs espiring entries in map
 In both RMap and RMapCache, you can use the expire() method to set a TTL for the entire map or map cache. The TTL specifies how long the entire map or map cache will be retained before it is automatically expired and cleared.
+
 The difference between RMap and RMapCache lies in their additional features and behaviors. RMapCache provides additional caching-related functionalities such as TTL-based entry expiration, eviction policies, and entry-level event notifications. On the other hand, RMap provides a simpler key-value storage structure without the caching-specific features.
 
 #### Entry Add/Remove Listener with RMapCache
@@ -473,6 +478,49 @@ public class RedissonMapCacheHelper {
     // ...
 }
 ```
+
+### Asynchronous Operations using RMapCacheAsync
+```Java
+import org.redisson.api.RMapCacheAsync;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
+@Component
+public class RedissonMapCacheAsyncHelper {
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    public CompletableFuture<Void> putValueAsync(String mapCacheKey, String key, String value, long ttl, TimeUnit timeUnit) {
+        RMapCacheAsync<String, String> mapCacheAsync = redissonClient.getMapCache(mapCacheKey).async();
+
+        return mapCacheAsync.putAsync(key, value, ttl, timeUnit)
+                .thenAcceptAsync(v -> System.out.println("Value stored asynchronously with key: " + key));
+    }
+
+    public CompletableFuture<String> getValueAsync(String mapCacheKey, String key) {
+        RMapCacheAsync<String, String> mapCacheAsync = redissonClient.getMapCache(mapCacheKey).async();
+
+        return mapCacheAsync.getAsync(key)
+                .thenApplyAsync(value -> {
+                    System.out.println("Value retrieved asynchronously with key: " + key);
+                    return value;
+                });
+    }
+
+    // ...
+}
+```
+
+The putValueAsync() method is used to store a value asynchronously in the RMapCache. It creates an RMapCacheAsync instance using the .async() method on the RMapCache object. Then, it uses the putAsync() method to asynchronously store the key-value pair with the specified TTL. The method returns a CompletableFuture<Void>, which allows you to handle the completion of the operation asynchronously. In this example, the completion of the operation is logged when the value is stored.
+
+The getValueAsync() method is used to retrieve a value asynchronously from the RMapCache. It follows a similar pattern by creating an RMapCacheAsync instance and using the getAsync() method to asynchronously retrieve the value associated with the specified key. It returns a CompletableFuture<String> that represents the asynchronous result of the operation. In this example, the retrieved value is logged when it is available.
+
+By using CompletableFuture and the asynchronous versions of cache operations provided by RMapCacheAsync, you can perform cache operations asynchronously, allowing for potentially improved performance and scalability in scenarios where parallelism and non-blocking operations are desired.
 
 
 ## Working with redis List data structure 
