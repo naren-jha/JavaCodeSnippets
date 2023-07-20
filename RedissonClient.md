@@ -1,3 +1,19 @@
+# Redisson
+Redisson offers several advanced features beyond basic operations. Some of these features include:
+
+1. Distributed Objects: Redisson provides distributed implementations of various Java objects such as Maps, Lists, Sets, Queues, and Locks. These objects can be used across different JVMs and allow for distributed data structures and synchronization.
+
+2. Data Caching: Redisson includes an advanced cache implementation that supports features like eviction policies, time-to-live (TTL) expiration, near-cache, and cache persistence. This allows for efficient caching of data in Redis with automatic data refreshing and eviction.
+
+3. Distributed Locks and Semaphores: Redisson provides distributed locks and semaphores that can be used for distributed coordination and synchronization across multiple JVMs or instances. These locks and semaphores are built on Redis' atomic operations and are highly scalable and performant.
+
+4. Pub/Sub Messaging: Redisson offers a robust Publish/Subscribe (Pub/Sub) messaging system that allows for real-time message-based communication between different components or services. It supports patterns, message listeners, and message filtering, making it suitable for building event-driven architectures.
+
+5. Task Scheduling: Redisson includes a distributed task scheduler that enables scheduling and execution of tasks across multiple JVMs. This feature is useful for scenarios where tasks need to be executed in a distributed manner and coordinated across instances.
+
+6. Remote Service Invocation: Redisson provides a remote service invocation framework that allows for invoking methods on remote objects across JVMs. It handles serialization, communication, and load balancing transparently, making it easier to build distributed systems.
+
+
 # Setting up redisson client
 
 ## redisson maven dependency
@@ -432,3 +448,6 @@ topic.publish("Hello, Redisson!");
 // Close the Redisson client
 redisson.shutdown();
 ```
+
+## Redisson vs Lettuce
+<img width="736" alt="image" src="https://github.com/naren-jha/JavaCodeSnippets/assets/58611230/df432fd4-5d09-4a3e-a92e-bb5067d03c41">
