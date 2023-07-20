@@ -264,6 +264,169 @@ Redisson's RMapCache offers additional capabilities beyond basic key-value stora
 
 5. Cache Loader: Redisson allows you to configure a cache loader that is invoked automatically when a cache entry is not found. The cache loader can retrieve the missing entry from a data source, such as a database, and populate the cache, providing a seamless integration between the cache and external data sources.
 
+### Max size eviction with RMapCache
+```Java
+import org.redisson.api.RMapCache;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.concurrent.TimeUnit;
+
+@Component
+public class RedissonMapCacheHelper {
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    public void configureMapCacheWithEviction() {
+        RMapCache<String, String> mapCache = redissonClient.getMapCache("myMapCache");
+
+        // Set maximum size and TTL for the map cache
+        int maxSize = 100;
+        long ttl = 10; // 10 seconds
+
+        mapCache.setMaxSize(maxSize);
+        mapCache.setMaxSizePolicy(RMapCache.MaxSizePolicy.PER_NODE);
+        mapCache.setTimeToLive(ttl, TimeUnit.SECONDS);
+    }
+
+    public void putValue(String key, String value) {
+        RMapCache<String, String> mapCache = redissonClient.getMapCache("myMapCache");
+        mapCache.put(key, value);
+    }
+
+    // ...
+}
+```
+The maxSize parameter in mapCache.setMaxSize(maxSize) represents the maximum size or capacity of the RMapCache. It specifies the maximum number of entries that can be stored in the cache before eviction is triggered.
+When the number of entries in the RMapCache reaches the maxSize, Redisson applies the configured eviction policy to make room for new entries. The eviction policy determines which entries to remove when the cache is full.
+The eviction policy set here is RMapCache.MaxSizePolicy.PER_NODE. This policy ensures that the maximum size is enforced per Redisson node rather than across the entire cluster.
+
+
+### Entry Expiry Listener with RMapCache
+```Java
+import org.redisson.api.RMapCache;
+import org.redisson.api.RedissonClient;
+import org.redisson.api.map.event.EntryExpiredListener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.concurrent.TimeUnit;
+
+@Component
+public class RedissonMapCacheHelper {
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    public void configureMapCacheWithExpirationListener() {
+        RMapCache<String, String> mapCache = redissonClient.getMapCache("myMapCache");
+
+        // Set time-to-live (TTL) for entries
+        long ttl = 60; // 60 seconds
+        mapCache.setTimeToLive(ttl, TimeUnit.SECONDS);
+
+        // Add entry expired listener
+        mapCache.addListener(new EntryExpiredListener<String, String>() {
+            @Override
+            public void onExpired(String key, String value) {
+                // Callback method when an entry expires
+                handleExpiration(key);
+            }
+        });
+    }
+
+    private void handleExpiration(String key) {
+        // Callback method to handle expiration
+        System.out.println("Key expired: " + key);
+        // Perform necessary actions or notify other components
+        // ...
+    }
+
+    public void putValue(String key, String value) {
+        RMapCache<String, String> mapCache = redissonClient.getMapCache("myMapCache");
+        mapCache.put(key, value);
+    }
+
+    public void putValueWithTTL(String key, String value, long ttl, TimeUnit timeUnit) {
+        RMapCache<String, String> mapCache = redissonClient.getMapCache("myMapCache");
+        mapCache.put(key, value, ttl, timeUnit);
+    }
+
+    // ...
+}
+```
+
+So when an entry expires in the RMapCache, it will execute callback method handleExpiration().
+Using redisson, you can set TTL for entries in map. This feature is not provided by redis itself. In Redis, the key expiration is handled at the key level, not at the individual entry level within a map. When a key expires in Redis, the entire key and its associated values are removed.
+However, Redisson provides additional functionality on top of Redis, including the ability to set TTLs for individual entries within a map using the RMapCache data structure. Redisson manages the expiration of individual entries in the map by using Redis' key expiration mechanism internally.
+The entry listener feature in Redisson allows you to receive notifications when an entry in the RMapCache expires. It is a Redisson-specific feature that provides a convenient way to react to expiration events at the entry level.
+Under the hood, Redisson leverages Redis' key expiration mechanism and combines it with internal bookkeeping to provide TTL-based eviction and event notification at the entry level within a map. This allows you to handle individual entry expiration events and perform custom actions based on those events.
+
+You cannpt achieve entry level expiry (and therefore notification) using simple RMap. for that you'll have to use RMapCache.
+
+#### expiring the entire map vs espiring entries in map
+In both RMap and RMapCache, you can use the expire() method to set a TTL for the entire map or map cache. The TTL specifies how long the entire map or map cache will be retained before it is automatically expired and cleared.
+The difference between RMap and RMapCache lies in their additional features and behaviors. RMapCache provides additional caching-related functionalities such as TTL-based entry expiration, eviction policies, and entry-level event notifications. On the other hand, RMap provides a simpler key-value storage structure without the caching-specific features.
+
+#### Entry Add/Remove Listener with RMapCache
+```Java
+import org.redisson.api.RMapCache;
+import org.redisson.api.RedissonClient;
+import org.redisson.api.map.event.EntryAddedListener;
+import org.redisson.api.map.event.EntryRemovedListener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class RedissonMapCacheHelper {
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    public void addEntryAddedListener(String mapCacheKey) {
+        RMapCache<String, String> mapCache = redissonClient.getMapCache(mapCacheKey);
+
+        // Register an entry added listener
+        mapCache.addListener(new EntryAddedListener<String, String>() {
+            @Override
+            public void onAdded(String key, String value) {
+                handleEntryAdded(key, value);
+            }
+        });
+    }
+
+    public void addEntryRemovedListener(String mapCacheKey) {
+        RMapCache<String, String> mapCache = redissonClient.getMapCache(mapCacheKey);
+
+        // Register an entry removed listener
+        mapCache.addListener(new EntryRemovedListener<String, String>() {
+            @Override
+            public void onRemoved(String key, String value) {
+                handleEntryRemoved(key, value);
+            }
+        });
+    }
+
+    private void handleEntryAdded(String key, String value) {
+        // Handle the entry added event
+        System.out.println("Entry added - Key: " + key + ", Value: " + value);
+        // Perform necessary actions or notify other components
+        // ...
+    }
+
+    private void handleEntryRemoved(String key, String value) {
+        // Handle the entry removed event
+        System.out.println("Entry removed - Key: " + key + ", Value: " + value);
+        // Perform necessary actions or notify other components
+        // ...
+    }
+
+    // ...
+}
+```
+
 
 ## Working with redis List data structure 
 ```Java
