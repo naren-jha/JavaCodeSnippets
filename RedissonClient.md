@@ -189,41 +189,6 @@ public class RedissonMapHelper {
 }
 ```
 
-## Working with redis List data structure 
-```Java
-import org.redisson.api.RList;
-import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-@Component
-public class RedissonListHelper {
-
-    @Autowired
-    private RedissonClient redissonClient;
-
-    public void addToList(String key, String value) {
-        RList<String> list = redissonClient.getList(key);
-        list.add(value);
-    }
-
-    public String getFromList(String key, int index) {
-        RList<String> list = redissonClient.getList(key);
-        return list.get(index);
-    }
-
-    public void removeFromList(String key, String value) {
-        RList<String> list = redissonClient.getList(key);
-        list.remove(value);
-    }
-
-    public int getListSize(String key) {
-        RList<String> list = redissonClient.getList(key);
-        return list.size();
-    }
-}
-```
-
 ## Working with redisson RMapCache 
 ```Java
 import org.redisson.api.RMapCache;
@@ -271,7 +236,40 @@ The main difference between RMap and RMapCache lies in the default behavior and 
 * RMapCache: RMapCache extends RMap and adds cache-related features. It supports features like time-based expiration, eviction policies (e.g., LRU, LFU), and cache-specific operations.
 
 
+## Working with redis List data structure 
+```Java
+import org.redisson.api.RList;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
+public class RedissonListHelper {
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    public void addToList(String key, String value) {
+        RList<String> list = redissonClient.getList(key);
+        list.add(value);
+    }
+
+    public String getFromList(String key, int index) {
+        RList<String> list = redissonClient.getList(key);
+        return list.get(index);
+    }
+
+    public void removeFromList(String key, String value) {
+        RList<String> list = redissonClient.getList(key);
+        list.remove(value);
+    }
+
+    public int getListSize(String key) {
+        RList<String> list = redissonClient.getList(key);
+        return list.size();
+    }
+}
+```
 
 ## Working with redis Set data structure
 ```Java
