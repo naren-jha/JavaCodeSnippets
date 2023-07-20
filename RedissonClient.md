@@ -107,3 +107,45 @@ public class RedissonClientHelper {
 
 }
 ```
+
+# Working with key-value data structure using redisson
+```Java
+ObjectMapper objectMapper = new ObjectMapper();
+String jsonValue = objectMapper.writeValueAsString(objectToStore);
+redissonClientHelper.getRedissonClient().getBucket(key).set(jsonValue, ttl, TimeUnit.SECONDS);
+```
+
+The redissonClientHelper.getRedissonClient().getBucket(key) code is used for simple key-value operations.
+In Redis, a "bucket" typically refers to a simple key-value data structure. The Redisson client provides the RBucket interface to work with simple key-value pairs. When you call getBucket(key) on the Redisson client, it returns an RBucket object associated with the specified key.
+
+You can then perform various operations on the RBucket object, such as setting a value with a TTL using the set() method, retrieving the value using the get() method, or deleting the key-value pair using the delete() method.
+
+```Java
+import org.redisson.api.RBucket;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class RedissonKeyValueHelper {
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    public void setValue(String key, String value) {
+        RBucket<String> bucket = redissonClient.getBucket(key);
+        bucket.set(value);
+    }
+
+    public String getValue(String key) {
+        RBucket<String> bucket = redissonClient.getBucket(key);
+        return bucket.get();
+    }
+
+    public void deleteKey(String key) {
+        RBucket<String> bucket = redissonClient.getBucket(key);
+        bucket.delete();
+    }
+}
+```
+
