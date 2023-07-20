@@ -171,6 +171,12 @@ public class RedissonMapHelper {
         map.put(field, value);
     }
 
+    public void putValueWithTTL(String key, String value, long ttl, TimeUnit timeUnit) {
+        RMap<String, String> map = redissonClient.getMap("myMap");
+        map.put(key, value);
+        map.expire(key, ttl, timeUnit);
+    }
+
     public String getHashValue(String key, String field) {
         RMap<String, String> map = redissonClient.getMap(key);
         return map.get(field);
@@ -217,6 +223,55 @@ public class RedissonListHelper {
     }
 }
 ```
+
+## Working with redisson RMapCache 
+```Java
+import org.redisson.api.RMapCache;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.concurrent.TimeUnit;
+
+@Component
+public class RedissonMapCacheHelper {
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    public void putValue(String key, String value, long ttl, TimeUnit timeUnit) {
+        RMapCache<String, String> mapCache = redissonClient.getMapCache("myMapCache");
+        mapCache.put(key, value, ttl, timeUnit);
+    }
+
+    public String getValue(String key) {
+        RMapCache<String, String> mapCache = redissonClient.getMapCache("myMapCache");
+        return mapCache.get(key);
+    }
+
+    public void removeKey(String key) {
+        RMapCache<String, String> mapCache = redissonClient.getMapCache("myMapCache");
+        mapCache.remove(key);
+    }
+}
+```
+
+You can set a TTL for a specific key in both RMap and RMapCache using the expire() method. This allows you to have time-based expiration for individual keys in both data structures.
+
+The main difference between RMap and RMapCache lies in the default behavior and additional features they provide:
+
+**Default Behavior:**
+
+* RMap: By default, entries in RMap do not have an expiration time. They will persist indefinitely until explicitly removed or updated.
+* RMapCache: By default, entries in RMapCache can have an expiration time. When you store an entry in RMapCache, you can specify a TTL, and Redisson will automatically handle the expiration of entries based on the TTL.
+
+**Additional Features:**
+
+* RMap: RMap provides basic key-value storage operations without additional caching-related features such as eviction policies.
+* RMapCache: RMapCache extends RMap and adds cache-related features. It supports features like time-based expiration, eviction policies (e.g., LRU, LFU), and cache-specific operations.
+
+
+
 
 ## Working with redis Set data structure
 ```Java
@@ -340,3 +395,9 @@ public class RedissonLockHelper {
     }
 }
 ```
+
+The performTaskWithLock() method shows an example of performing a task while holding the lock. It acquires the lock using lock.lock() before executing the task and releases the lock using lock.unlock() in a finally block to ensure the lock is always released, even in case of exceptions.
+
+The tryLock() method demonstrates trying to acquire the lock with a timeout. It attempts to acquire the lock using lock.tryLock(timeout, TimeUnit) and returns true if the lock is acquired within the specified timeout. If the lock acquisition is interrupted, it returns false.
+
+The releaseLock() method is used to explicitly release the lock. It checks if the lock is still held (isLocked()) and calls unlock() to release it.
