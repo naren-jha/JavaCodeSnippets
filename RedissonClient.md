@@ -1,4 +1,4 @@
-# Settipng up redisson client
+# Setting up redisson client
 
 ## redisson maven dependency
 First add redisson dpendency in pom.xml as below - 
