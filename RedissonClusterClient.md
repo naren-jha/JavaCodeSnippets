@@ -623,6 +623,7 @@ Therefore, the blocking call occurs when you access the results of individual op
 If you want to handle the results asynchronously without blocking, you can use the thenAcceptAsync() or thenApplyAsync() methods on the RFuture objects to specify callbacks or transformation functions to process the results when they become available. This way, you can achieve non-blocking behavior and continue processing other tasks while waiting for the results to complete.
 
 **What's the difference between thenAcceptAsync and thenApplyAsync ?**
+
 The thenAcceptAsync() and thenApplyAsync() methods are both part of the RFuture interface in Redisson, which represents an asynchronous result of a Redisson operation. Both methods allow you to specify callbacks to handle the result of the operation asynchronously. However, there is a difference in their return types and intended usage:
 
 1. thenAcceptAsync(): This method is used for asynchronous result handling without returning a value. It takes a Consumer functional interface as a parameter, which represents a callback function that accepts the result as input and performs some action. The thenAcceptAsync() method returns a CompletableFuture<Void> that represents the completion of the callback action.
@@ -648,6 +649,7 @@ CompletableFuture<Integer> transformedFuture = future.thenApplyAsync(result -> {
 In summary, thenAcceptAsync() is used when you want to perform some action asynchronously with the result, without returning a value. On the other hand, thenApplyAsync() is used when you want to perform a computation asynchronously based on the result and return a transformed value.
 
 Both methods allow you to handle the results asynchronously without blocking the current thread, providing flexibility in handling the asynchronous outcomes of Redisson operations.
+
 
 
 ## Working with redis List data structure 
