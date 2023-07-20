@@ -235,6 +235,18 @@ The main difference between RMap and RMapCache lies in the default behavior and 
 * RMap: RMap provides basic key-value storage operations without additional caching-related features such as eviction policies.
 * RMapCache: RMapCache extends RMap and adds cache-related features. It supports features like time-based expiration, eviction policies (e.g., LRU, LFU), and cache-specific operations.
 
+Redisson's RMapCache offers additional capabilities beyond basic key-value storage and TTL-based eviction. Some of the additional capabilities provided by RMapCache are:
+
+1. Maximum Size Eviction: You can set a maximum size for the RMapCache, and when the size exceeds the configured threshold, Redisson automatically evicts the least recently used entries to make room for new entries. This feature is useful for cache management and ensuring that the cache doesn't grow indefinitely.
+
+2. Entry Listener: Redisson allows you to attach entry listeners to RMapCache to receive notifications when specific events occur, such as the addition, removal, or expiration of entries. This enables you to react to changes in the cache and take necessary actions.
+
+3. Asynchronous Operations: Redisson provides asynchronous versions of cache operations, allowing you to perform cache operations asynchronously, which can be beneficial for performance and scalability in certain scenarios.
+
+4. Batch Operations: Redisson supports batch operations on RMapCache, allowing you to perform multiple cache operations in a single atomic batch. This can improve performance and reduce network round-trips when working with multiple cache entries simultaneously.
+
+5. Cache Loader: Redisson allows you to configure a cache loader that is invoked automatically when a cache entry is not found. The cache loader can retrieve the missing entry from a data source, such as a database, and populate the cache, providing a seamless integration between the cache and external data sources.
+
 
 ## Working with redis List data structure 
 ```Java
