@@ -238,7 +238,7 @@ public class RedissonMapCacheHelper {
 }
 ```
 
-You can set a TTL for the entire map using RMap, but you can set a TTL for the entire map or individual keys in map using RMapCache. 
+Using RMap you can set a TTL only for the entire map, but using RMapCache you can set a TTL either for the entire map or for the individual keys in the map. 
 
 The main difference between RMap and RMapCache lies in the default behavior and additional features they provide:
 
