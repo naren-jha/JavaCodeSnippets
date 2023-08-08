@@ -238,7 +238,7 @@ public class RedissonMapCacheHelper {
 }
 ```
 
-You can set a TTL for a specific key in both RMap and RMapCache using the expire() method. This allows you to have time-based expiration for individual keys in both data structures.
+You can set a TTL for the entire map using RMap, but you can set a TTL for the entire map or individual keys in map using RMapCache. 
 
 The main difference between RMap and RMapCache lies in the default behavior and additional features they provide:
 
