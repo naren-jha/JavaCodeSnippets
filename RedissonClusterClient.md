@@ -746,7 +746,7 @@ for (String element : elementsInRange) {
 }
 ```
 
-There is also a RSortedSet which is a redis list implementation and keeps the elements sorted in natural sorting order of the element
+There is also a RSortedSet which is a redis LIST implementation and keeps the elements sorted in natural sorting order of the element
 ```Java
 // Get the RSortedSet instance
 RSortedSet<String> sortedSet = redisson.getSortedSet("mySortedSet");
