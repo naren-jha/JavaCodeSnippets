@@ -238,7 +238,11 @@ public class RedissonMapCacheHelper {
 }
 ```
 
+**TTL on individual keys:**
 Using RMap you can set a TTL only for the entire map, but using RMapCache you can set a TTL either for the entire map or for the individual keys in the map. 
+
+**Warning:** This feature (expiry on individual keys of map) is provided by redisson and not redis itself. So sometimes you might find that it is behaving weirdly. 
+For example, if your application crashes before the expiry time is reached for an entry, it won't actually expire untill your application is recovered/healthy again. This is because expiry is handled by redisson (will be triggered/executed from your application code), so obviously if the application is down, expiry doesn't get triggered. [See Here](https://stackoverflow.com/questions/55126579/redisson-cache-map-does-not-evict-if-process-is-terminated)
 
 The main difference between RMap and RMapCache lies in the default behavior and additional features they provide:
 
