@@ -692,6 +692,9 @@ public class RedissonListHelper {
 ```
 
 ## Working with redis Set data structure
+
+Redisson **RSet**:
+
 ```Java
 import org.redisson.api.RSet;
 import org.redisson.api.RedissonClient;
@@ -725,6 +728,17 @@ public class RedissonSetHelper {
     }
 }
 ```
+
+Just like RMapCache, there is a advance implementation of RSet called **RSetCache**
+- RSet:
+  - Regular Redis set without any caching or eviction features.
+  - Elements remain in the set until explicitly removed.
+  - No TTL or eviction mechanism.
+
+- RSetCache:
+  - Enhanced Redis set with caching and eviction capabilities.
+  - Elements have an associated TTL and are automatically evicted after the TTL has elapsed.
+  - Useful for caching elements for a limited time and automatic cleanup of stale data.
 
 ## Working with redis SortedSet data structure
 
