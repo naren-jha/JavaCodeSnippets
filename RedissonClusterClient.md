@@ -723,38 +723,42 @@ public class RedissonSetHelper {
 ```
 
 ## Working with redis SortedSet data structure
+
+Redisson **RScoredSortedSet**:
 ```Java
-import org.redisson.api.RSortedSet;
-import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+// Get the RScoredSortedSet instance
+RScoredSortedSet<String> sortedSet = redisson.getScoredSortedSet("myScoredSortedSet");
 
-@Component
-public class RedissonSortedSetHelper {
+// Add elements with scores to the sorted set
+sortedSet.addScore("element1", 10.5);
+sortedSet.addScore("element2", 15.3);
+sortedSet.addScore("element3", 20.7);
+// Add more elements as needed
 
-    @Autowired
-    private RedissonClient redissonClient;
+// Retrieve elements from the sorted set based on scores
+double minScore = 15.0;
+double maxScore = 25.0;
+Set<String> elementsInRange = sortedSet.valueRange(minScore, true, maxScore, true);
 
-    public void addToSortedSet(String key, String value, double score) {
-        RSortedSet<String> sortedSet = redissonClient.getSortedSet(key);
-        sortedSet.add(score, value);
-    }
-
-    public boolean isMemberOfSortedSet(String key, String value) {
-        RSortedSet<String> sortedSet = redissonClient.getSortedSet(key);
-        return sortedSet.contains(value);
-    }
-
-    public void removeFromSortedSet(String key, String value) {
-        RSortedSet<String> sortedSet = redissonClient.getSortedSet(key);
-        sortedSet.remove(value);
-    }
-
-    public int getSortedSetSize(String key) {
-        RSortedSet<String> sortedSet = redissonClient.getSortedSet(key);
-        return sortedSet.size();
-    }
+// Print the elements in the specified score range
+for (String element : elementsInRange) {
+    System.out.println("Element in range: " + element);
 }
+```
+
+There is also a RSortedSet which is a redis list implementation and keeps the elements sorted in natural sorting order of the element
+```Java
+// Get the RSortedSet instance
+RSortedSet<String> sortedSet = redisson.getSortedSet("mySortedSet");
+
+// Add elements to the sorted set
+sortedSet.add("element1");
+sortedSet.add("element2");
+sortedSet.add("element3");
+// Add more elements as needed
+
+// Retrieve elements from the sorted set in their natural order
+Set<String> elements = sortedSet.readAll();
 ```
 
 ## Working with redisson distributed lock
