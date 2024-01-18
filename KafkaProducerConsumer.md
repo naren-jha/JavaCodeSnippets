@@ -1,8 +1,38 @@
 **Batch Consumer**
 
-<img width="1334" alt="Screenshot 2024-01-18 at 6 03 48 PM" src="https://github.com/naren-jha/JavaCodeSnippets/assets/58611230/794861e3-4e20-4231-b681-9674f5bb9429">
-<img width="770" alt="Screenshot 2024-01-18 at 6 05 01 PM" src="https://github.com/naren-jha/JavaCodeSnippets/assets/58611230/5e153d70-1456-44c7-8d5d-57f2c7f87b10">
 
+Dependency
+==========
+<properties>
+    <java. version>1.8</java. version>
+    <dockerplugin.version>0.4.10</dockerplugin.version>
+    <docker.repository>------</docker.repository>
+    <compiler.version>3.7.0</compiler.version>
+    <Lombook.version>1.18.22</lombook.version>
+    <springbootdep.version>2.6.6</springbootdep.version>
+    <redisson.version>3.19.2</redisson. version>
+    <snappy.version>1.1.10.1</snappy. version>
+    <google.gson>2.9.1</google.gson>
+    <org-json>20230227</org.json>
+    <newrelic.version>7.5.0</newrelic. version>
+    <springdoc.version>1.6.7</springdoc. version>
+    <kafka.version>0.10.2.1</kafka.version>
+    <httpclient.version>4.5</httpclient. version>
+    <accounting.acc.commons>1.0.60≤/accounting.acc.commons>
+    <mysql.connector.version>8.0.28</mysql.connector.version>
+    <project.build.sourceEnceding>UTF-8</project.build.sourceEncoding>
+</properties>
+
+<dependency>
+    <groupId>org.apache.kafka</groupId> 
+    <artifactId>kafka_2.12</artifactId>
+    <version>${kafka.version}</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.kafka</groupId> 
+    <artifactId>kafka-clients</artifactId> 
+    <version>${kafka.version}</version>
+</dependency>
 
 ```
 import com.fasterxml.jackson.databind.ObjectMapper;
