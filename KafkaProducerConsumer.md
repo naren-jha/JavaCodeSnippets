@@ -1,3 +1,5 @@
+**Batch Consumer**
+
 ```
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -389,4 +391,157 @@ status.max.poll.records=100
 status.bootstrap.servers=localhost\:9092
 status.group.id=status_consumer_group
 status.event.auto.commit.interval=100
+```
+
+
+=========================================================
+
+
+**Single event consumer**
+
+```
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kafka.consumer.ConsumerConfig;
+import kafka.consumer.ConsumerIterator;
+import kafka.consumer.KafkaStream;
+import kafka.javaapi.consumer.ConsumerConnector;
+import kafka.message.MessageAndMetadata;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
+import java.util.concurrent.Callable;
+
+@Component("deviceLocationConsumer")
+public class DeviceLocationConsumer implements Callable {
+
+    @Value("${device.location.zookeeper.connect}")
+    private String zookeeperConnect;
+
+    @Value("${device.location.auto.offset.reset}")
+    private String autoOffsetReset;
+
+    @Value("${device.location.auto.commit.enable}")
+    private String autoCommitEnable;
+
+    @Value("${device.location.topic}")
+    private String deviceLocationTopic;
+
+    @Value("${device.location.topic.consumer.count}")
+    private int deviceLocationTopicConsumerCount;
+
+    @Value("${device.location.group.id}")
+    private String deviceLocationGroupId;
+
+    @Value("${ev.bike.nudge.supported.categories}")
+    private String evNudgeSupportedCategories;
+
+    private ConsumerConnector consumer;
+    private ConsumerIterator<byte[], byte[]> consumerIterator;
+    private boolean interrupted;
+    private boolean initialized = false;
+
+    private Logger logger = LoggerFactory.getLogger(DeviceLocationConsumer.class);
+    private ObjectMapper mapper = new ObjectMapper();
+
+    @Autowired
+    private DeviceLocationProcessor deviceLocationProcessor;
+
+    @Autowired
+    private EVBikeEventProcessor evBikeEventProcessor;
+
+    public void init() {
+        if (initialized) {
+            return;
+        }
+        try {
+            interrupted = false;
+            consumer =  kafka.consumer.Consumer.createJavaConsumerConnector(createConsumerConfig());
+            logger.info("device location event kafka consumer initialized.");
+            Map<String, Integer> topicCountMap = new HashMap<String, Integer>();
+            topicCountMap.put(deviceLocationTopic, deviceLocationTopicConsumerCount);
+            Map<String, List<KafkaStream<byte[], byte[]>>> consumerMap = consumer.createMessageStreams(topicCountMap);
+            KafkaStream<byte[], byte[]> stream = consumerMap.get(deviceLocationTopic).get(0);
+            consumerIterator = stream.iterator();
+            initialized = true;
+        } catch(Exception exception) {
+            logger.error("initialization failed for device location event kafka consumer", exception);
+        }
+    }
+
+    private ConsumerConfig createConsumerConfig() {
+        Properties props = new Properties();
+        props.put("zookeeper.connect", zookeeperConnect);
+        props.put("group.id", deviceLocationGroupId);
+        props.put("auto.offset.reset", autoOffsetReset);
+        props.put("auto.commit.enable", autoCommitEnable);
+        return new ConsumerConfig(props);
+    }
+
+    public void shutdown() {
+        if (consumer != null) {
+            logger.error("shutting down device location event kafka consumer");
+            consumer.shutdown();
+            consumer = null;
+            initialized = false;
+        }
+    }
+
+    public boolean isRunning() {
+        return consumer != null;
+    }
+
+    public Object call() throws Exception {
+        while(!Thread.currentThread().isInterrupted() && !interrupted) {
+            try {
+                if (consumerIterator.hasNext()) {
+
+                    MessageAndMetadata<byte[], byte[]> messageAndMetaData = consumerIterator.next();
+                    byte[] eventBytes = messageAndMetaData.message();
+                    if (eventBytes == null){
+                        logger.error("no event received on topic - {}", deviceLocationTopic);
+                        continue;
+                    }
+
+                    String event = new String(eventBytes).trim();
+                    logger.info("device location consumer. received event - {}", event);
+                    try {
+                        DeviceLocationPing deviceLocationPing = mapper.readValue(event, DeviceLocationPing.class);
+                        DeviceLocationPing.DeviceLocationPingData deviceLocationPingData = deviceLocationPing.getDeviceLocationPingData();
+                        DevicePingData devicePingData = mapper.readValue(deviceLocationPingData.getLocationJson(), DevicePingData.class);
+                        deviceLocationProcessor.process(devicePingData);
+                    }
+                    catch (Exception exception) {
+                        logger.error("error in processing event - {} , error - {}", event, exception);
+                    }
+                    consumer.commitOffsets();
+                }
+                else {
+                    logger.info("topic - {}, nothing to read from consumer.", deviceLocationTopic);
+                }
+            }
+            catch (Exception exception) {
+                logger.error("topic - {}, exception while reading records from kafka queue - {}", deviceLocationTopic, exception);
+                if(exception.getCause() instanceof InterruptedException) {
+                    logger.error("topic - {}, consumer interrupted. breaking it.", deviceLocationTopic);
+                    interrupted = true;
+                    break;
+                }
+                else {
+                    logger.error("topic - {}, restarting kafka consumer because of error : {}", deviceLocationTopic, exception.getMessage());
+                    shutdown();
+                    init();
+                }
+            }
+        }
+        logger.error("topic - {}, transaction events consumer interrupted.", deviceLocationTopic);
+        shutdown();
+        return true;
+    }
+
+}
 ```
