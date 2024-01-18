@@ -1,5 +1,9 @@
 **Batch Consumer**
 
+<img width="1334" alt="Screenshot 2024-01-18 at 6 03 48 PM" src="https://github.com/naren-jha/JavaCodeSnippets/assets/58611230/794861e3-4e20-4231-b681-9674f5bb9429">
+<img width="770" alt="Screenshot 2024-01-18 at 6 05 01 PM" src="https://github.com/naren-jha/JavaCodeSnippets/assets/58611230/5e153d70-1456-44c7-8d5d-57f2c7f87b10">
+
+
 ```
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
