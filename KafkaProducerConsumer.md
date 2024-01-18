@@ -9,13 +9,12 @@ Dependency
     <dockerplugin.version>0.4.10</dockerplugin.version>
     <docker.repository>------</docker.repository>
     <compiler.version>3.7.0</compiler.version>
-    <Lombook.version>1.18.22</lombook.version>
+    <lombook.version>1.18.22</lombook.version>
     <springbootdep.version>2.6.6</springbootdep.version>
     <redisson.version>3.19.2</redisson. version>
     <snappy.version>1.1.10.1</snappy. version>
     <google.gson>2.9.1</google.gson>
     <org-json>20230227</org.json>
-    <newrelic.version>7.5.0</newrelic. version>
     <springdoc.version>1.6.7</springdoc. version>
     <kafka.version>0.10.2.1</kafka.version>
     <httpclient.version>4.5</httpclient. version>
