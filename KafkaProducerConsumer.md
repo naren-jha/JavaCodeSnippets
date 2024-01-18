@@ -1,3 +1,4 @@
+```
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -134,12 +135,12 @@ public class StatusConsumer extends Thread {
     }
 }
 
-
+```
 
 ============
 
 
-
+```
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -183,13 +184,13 @@ public class StatusConsumerInitializer {
         }
     }
 }
+```
 
 
 =============
 
 
-
-
+```
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -220,13 +221,13 @@ public class StatusEventProcessor {
         }
     }
 }
-
+```
 
 
 =============
 
 
-
+```
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -253,13 +254,13 @@ public class ProducerPool implements IProducerPool {
         }
     }
 }
-
+```
 
 
 =============
 
 
-
+```
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
@@ -323,33 +324,33 @@ public class ProducerClient implements IProducerClient {
         }
     }
 }
-
+```
 
 
 ==========
 
 
-
+```
 public interface IProducerClient {
     public void send(String topic, String value) throws Exception;
     public void send(String topic, String key, String value);
 }
-
+```
 
 
 ==========
 
-
+```
 public interface IProducerPool {
     public void send(String topic, OnlinePaymentUpdateRequest data) throws Exception;
 }
-
+```
 
 
 ==========
 
 
-
+```
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -372,11 +373,11 @@ public class KafkaProduceHandler {
 
     }
 }
-
+```
 
 ===========
 
-
+```
 kafka.producer.push.enable=true
 producer.broker.list=localhost\:9092
 producer.request.ack=1
@@ -388,3 +389,4 @@ status.max.poll.records=100
 status.bootstrap.servers=localhost\:9092
 status.group.id=status_consumer_group
 status.event.auto.commit.interval=100
+```
