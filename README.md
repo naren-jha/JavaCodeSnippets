@@ -1,2 +1,2 @@
 # JavaCodeSnippets
-Java code snippets for different concepts
+Java code snippets for various concepts
