@@ -188,12 +188,6 @@ public class RedissonMapHelper {
         map.put(field, value);
     }
 
-    public void putValueWithTTL(String key, String value, long ttl, TimeUnit timeUnit) {
-        RMap<String, String> map = redissonClient.getMap("myMap");
-        map.put(key, value);
-        map.expire(key, ttl, timeUnit);
-    }
-
     public String getHashValue(String key, String field) {
         RMap<String, String> map = redissonClient.getMap(key);
         return map.get(field);
