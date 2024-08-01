@@ -1,7 +1,7 @@
 **Batch Consumer**
 
 
-Dependency
+**Dependency
 ==========
 ```
 <properties>
