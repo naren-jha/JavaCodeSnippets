@@ -229,6 +229,41 @@ public class StatusConsumerInitializer {
 
 =============
 
+```
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+@Configuration
+public class ThreadPoolExecutorBean {
+
+    @Value("${executor.core.pool.size}")
+    private int poolSize;
+
+    @Value("${minimum.pool.size}")
+    private int minimumPoolSize;
+
+    @Value("${keep.alive.time.sec}")
+    private int keepAliveTimeSec;
+
+    @Bean("executorService")
+    public ExecutorService getExecutorService(){
+        ExecutorService executorService = new ThreadPoolExecutor(poolSize, minimumPoolSize, keepAliveTimeSec,
+                TimeUnit.SECONDS, new LinkedBlockingDeque<>());
+        return executorService;
+    }
+}
+
+```
+
+
+=============
+
 
 ```
 import lombok.extern.slf4j.Slf4j;
