@@ -240,20 +240,20 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
-public class ThreadPoolExecutorBean {
+public class ThreadPoolExecutorConfig {
 
     @Value("${executor.core.pool.size}")
     private int poolSize;
 
-    @Value("${minimum.pool.size}")
-    private int minimumPoolSize;
+    @Value("${maximum.pool.size}")
+    private int maximumPoolSize;
 
     @Value("${keep.alive.time.sec}")
     private int keepAliveTimeSec;
 
     @Bean("executorService")
     public ExecutorService getExecutorService(){
-        ExecutorService executorService = new ThreadPoolExecutor(poolSize, minimumPoolSize, keepAliveTimeSec,
+        ExecutorService executorService = new ThreadPoolExecutor(poolSize, maximumPoolSize, keepAliveTimeSec,
                 TimeUnit.SECONDS, new LinkedBlockingDeque<>());
         return executorService;
     }
