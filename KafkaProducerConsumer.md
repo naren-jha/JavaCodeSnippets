@@ -1,7 +1,9 @@
 
 Kafka Consumers
 ==========
-**Dependency
+
+**Dependency**
+
 ```
 <properties>
     <java. version>1.8</java. version>
