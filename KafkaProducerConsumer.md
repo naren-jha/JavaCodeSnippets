@@ -1,8 +1,7 @@
-**Batch Consumer**
 
-
-**Dependency
+Kafka Consumers
 ==========
+**Dependency
 ```
 <properties>
     <java. version>1.8</java. version>
@@ -36,7 +35,7 @@
 </dependency>
 ```
 
-
+**Batch Consumer**
 
 ```
 import com.fasterxml.jackson.databind.ObjectMapper;
