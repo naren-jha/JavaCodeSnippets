@@ -19,7 +19,6 @@ Kafka Consumers
     <springdoc.version>1.6.7</springdoc. version>
     <kafka.version>0.10.2.1</kafka.version>
     <httpclient.version>4.5</httpclient. version>
-    <accounting.acc.commons>1.0.60≤/accounting.acc.commons>
     <mysql.connector.version>8.0.28</mysql.connector.version>
     <project.build.sourceEnceding>UTF-8</project.build.sourceEncoding>
 </properties>
